@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pin Generator</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-6">
+                <div class="pin-generator half-width">
+                    <input id="show-pin" class="form-control" type="text">
+                    <button id="pin-create" class="generate-btn">Generate Pin</button>
+                </div>
+            </div>
+            <div class="col-md-6">
+                <div class="input-section half-width">
+                    <input id="password-screen" class="form-control" type="text" value="">
+                    <div class="numbers">
+                        <div class="calc-body">
+                            <div class="calc-button-row">
+                              <div class="button number">7</div>
+                              <div class="button number">8</div>
+                              <div class="button number">9</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button number">4</div>
+                              <div class="button number">5</div>
+                              <div class="button number">6</div>
+                            </div>
+                            <div class="calc-button-row">
+                              <div class="button number">1</div>
+                              <div class="button number">2</div>
+                              <div class="button number">3</div>
+                            </div>
+                            <div class="calc-button-row">
+                                <div id="remove-single-number" class="button"><</div>
+                                <div class="button number">0</div>
+                                <div id="clean-data" class="button">C</div>
+                            </div>
+                            <div>
+                                <button id="submit-pin" type="submit" class="submit-btn">Submit</button>
+                                <p class="action-left">3 try left</p>
+                            </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="notify-section">
+            <p id="not-matched" class="notify">❌ Pin Didn't Match, Please try again</p>
+            <p id="pin-matched" class="notify">✅ Pin Matched... Secret door is opening for you</p>
+        </div>
+    </div>
+
+    <script>
+        // === create a new pin === ///
+        document.getElementById("pin-create").addEventListener("click", function(){
+            let pin = Math.random()*10000;
+            // let pinRound = Math.round(pin);
+            if(pin < 1000){
+                pin = pin * 10;
+            }
+            else if(pin > 9999){
+                pin = pin / 10;
+            }
+            let pinRound = Math.round(pin);
+            
+            document.getElementById("show-pin").value = pinRound;
+        })
+
+        // === type your pin === //
+        let numbers = document.getElementsByClassName("number");
+        for(let i = 0; i < numbers.length; i++){
+            let number = numbers[i];
+            number.addEventListener("click", function(event){
+                const value = number.innerText;
+                document.getElementById("password-screen").value += value;
+            })
+        }
+
+        // === match your pin === //
+        document.getElementById("submit-pin").addEventListener("click", function(){
+            let generatedPin = document.getElementById("show-pin").value
+            let typingPin = document.getElementById("password-screen").value;
+            if(generatedPin != "" && typingPin != ""){
+                if(generatedPin == typingPin){
+                notifyWhenTrue();
+                }
+                else{
+                    notifyWhenFalse();
+                }
+            }
+            else{
+                document.getElementById("pin-matched").style.display ="none"
+                document.getElementById("not-matched").style.display ="none"
+            }
+        })
+
+        // === clean all data from display === ///
+        document.getElementById("clean-data").addEventListener("click", function(){
+            document.getElementById("password-screen").value = null;
+        })
+
+        // === clean one by one number by button === //
+        document.getElementById("remove-single-number").addEventListener("click", function(){
+            let providedNumber = document.getElementById("password-screen").value
+            if(providedNumber != ""){
+                let countNumber = []
+                for(let i = 0; i < providedNumber.length; i++){
+                    let element = providedNumber[i];
+                    countNumber.push(element);
+            }
+                let removeNumber = countNumber.pop();
+                let beforeRemove = parseInt(providedNumber);
+                let removeParseNumber = parseInt(removeNumber)
+                let result = beforeRemove - removeParseNumber;
+                let finalNumber = result /10;
+                if(finalNumber == 0){
+                 document.getElementById("password-screen").value = "";
+            }
+                else{
+                    document.getElementById("password-screen").value = finalNumber;
+            }
+            }
+        })
+
+        // === notify massage function ===//
+        function notifyWhenTrue(){
+            document.getElementById("pin-matched").style.display ="block"
+            document.getElementById("not-matched").style.display ="none"
+        }
+        function notifyWhenFalse(){
+            document.getElementById("pin-matched").style.display ="none"
+            document.getElementById("not-matched").style.display ="block"
+        }
+    </script>
+</body>
+</html>
